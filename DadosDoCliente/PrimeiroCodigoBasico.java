@@ -1,6 +1,5 @@
 package DadosDoCliente;
 
-
 import java.io.*;
 import java.text.ParseException;
 import java.util.Scanner;
@@ -53,7 +52,7 @@ public class PrimeiroCodigoBasico {
         System.out.println("Bairro cliente: ");
         String bairro = scanner.nextLine();
 
-        System.out.println("Profissao dO cliente: ");
+        System.out.println("Profissao do cliente: ");
         String profissao = scanner.nextLine();
 
         System.out.println("Onde o cliente nos conheceu: ");
@@ -99,7 +98,7 @@ public class PrimeiroCodigoBasico {
             bw.newLine();
             bw.write("Onde nos conheceu: " + ondeconheceu);
             bw.newLine();
-            bw.write("preferida: " + corpreferida);
+            bw.write("Cor preferida: " + corpreferida);
             bw.newLine();
             bw.write("Descrição da tattoo: " + descricao);
             bw.newLine();
@@ -113,3 +112,4 @@ public class PrimeiroCodigoBasico {
         scanner.close();
     }
 }
+

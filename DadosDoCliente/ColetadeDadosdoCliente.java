@@ -1,6 +1,9 @@
 package DadosDoCliente;
 
-import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Scanner;
 import javax.swing.JFormattedTextField;
@@ -11,6 +14,7 @@ public class ColetadeDadosdoCliente {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         
+        // Coleta dos dados do cliente
         System.out.print("Nome do Cliente: ");
         String nome = scanner.nextLine();
 
@@ -18,10 +22,10 @@ public class ColetadeDadosdoCliente {
         String email = scanner.nextLine();
 
         System.out.println("Data de Nascimento: ");
-        String datanascimento = ""; // ✅ Declara APENAS uma vez
+        String datanascimento = ""; 
 
         try {
-            MaskFormatter mask = new MaskFormatter("##/##/####"); // Formato de data dd/mm/aaaa
+            MaskFormatter mask = new MaskFormatter("####-##-##"); // Formato de data dd/mm/aaaa
             mask.setPlaceholderCharacter('_');
 
             JFormattedTextField campoData = new JFormattedTextField(mask);
@@ -33,7 +37,6 @@ public class ColetadeDadosdoCliente {
         }
         System.out.println(datanascimento);
   
-        
         System.out.println("CPF do cliente: ");
         String cpf = "";
         try {
@@ -52,7 +55,7 @@ public class ColetadeDadosdoCliente {
         System.out.println("Bairro cliente: ");
         String bairro = scanner.nextLine();
 
-        System.out.println("Profissao dO cliente: ");
+        System.out.println("Profissao do cliente: ");
         String profissao = scanner.nextLine();
 
         System.out.println("Onde o cliente nos conheceu: ");
@@ -68,7 +71,7 @@ public class ColetadeDadosdoCliente {
         String dataprocedimento = ""; 
 
         try {
-            MaskFormatter mask = new MaskFormatter("##/##/####");
+            MaskFormatter mask = new MaskFormatter("####-##-##");
             mask.setPlaceholderCharacter('_');
 
             JFormattedTextField campoData = new JFormattedTextField(mask);
@@ -80,35 +83,37 @@ public class ColetadeDadosdoCliente {
         }
         System.out.println(dataprocedimento);
         
-        
-        try (FileWriter fw = new FileWriter("dados_usuario.txt", true);
-             BufferedWriter bw = new BufferedWriter(fw)) {
+        // Conectar ao banco de dados e inserir os dados
+        String url = ""; // URL do banco
+        String usuario = "";  // Nome de usuário MySQL
+        String senha = "";        // Senha do MySQL
+
+        // Query SQL para inserção dos dados
+        String query = "INSERT INTO cliente (nome, email, datanascimento, cpf, bairro, profissao, ondeconheceu, corpreferida, descricao, dataprocedimento) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(url, usuario, senha);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
             
-            bw.write("Nome: " + nome);
-            bw.newLine();
-            bw.write("E-mail: " + email);
-            bw.newLine();
-            bw.write("Data Nascimento: " + datanascimento);
-            bw.newLine();
-            bw.write("CPF: " + cpf);
-            bw.newLine();
-            bw.write("Bairro: " + bairro);
-            bw.newLine();
-            bw.write("Profissao: " + profissao);
-            bw.newLine();
-            bw.write("Onde nos conheceu: " + ondeconheceu);
-            bw.newLine();
-            bw.write("preferida: " + corpreferida);
-            bw.newLine();
-            bw.write("Descrição da tattoo: " + descricao);
-            bw.write("----------------------");
-            bw.newLine();
-            
-            System.out.println("Dados salvos com sucesso!");
-        } catch (IOException e) {
-            System.out.println("Erro ao salvar os dados: " + e.getMessage());
+            // Definir os valores dos parâmetros
+            stmt.setString(1, nome);
+            stmt.setString(2, email);
+            stmt.setString(3, datanascimento);
+            stmt.setString(4, cpf);
+            stmt.setString(5, bairro);
+            stmt.setString(6, profissao);
+            stmt.setString(7, ondeconheceu);
+            stmt.setString(8, corpreferida);
+            stmt.setString(9, descricao);
+            stmt.setString(10, dataprocedimento);
+
+            // Executar a query
+            stmt.executeUpdate();
+            System.out.println("Dados inseridos no banco com sucesso!");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        
+
+        // Fechar o scanner
         scanner.close();
     }
 }
