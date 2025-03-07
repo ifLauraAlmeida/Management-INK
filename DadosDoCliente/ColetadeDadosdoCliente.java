@@ -12,14 +12,14 @@ import javax.swing.text.MaskFormatter;
 
 public class ColetadeDadosdoCliente {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Scanner scannerDadosPessoais = new Scanner(System.in);
         
         // Coleta dos dados do cliente
         System.out.print("Nome do Cliente: ");
-        String nome = scanner.nextLine();
+        String nome = scannerDadosPessoais.nextLine();
 
         System.out.println("E-mail do cliente: ");
-        String email = scanner.nextLine();
+        String email = scannerDadosPessoais.nextLine();
 
         System.out.println("Data de Nascimento: ");
         String datanascimento = ""; 
@@ -53,35 +53,19 @@ public class ColetadeDadosdoCliente {
         System.out.println(cpf);
 
         System.out.println("Bairro cliente: ");
-        String bairro = scanner.nextLine();
+        String bairro = scannerDadosPessoais.nextLine();
 
         System.out.println("Profissao do cliente: ");
-        String profissao = scanner.nextLine();
+        String profissao = scannerDadosPessoais.nextLine();
 
         System.out.println("Onde o cliente nos conheceu: ");
-        String ondeconheceu = scanner.nextLine();
+        String ondeconheceu = scannerDadosPessoais.nextLine();
 
         System.out.println("Cor preferida do cliente: ");
-        String corpreferida = scanner.nextLine();
+        String corpreferida = scannerDadosPessoais.nextLine();
 
         System.out.println("Descrição da tattoo: ");
-        String descricao = scanner.nextLine();
-
-        System.out.println("Data de procedimento: ");
-        String dataprocedimento = ""; 
-
-        try {
-            MaskFormatter mask = new MaskFormatter("####-##-##");
-            mask.setPlaceholderCharacter('_');
-
-            JFormattedTextField campoData = new JFormattedTextField(mask);
-            JOptionPane.showMessageDialog(null, campoData, "Data do procedimento: ", JOptionPane.QUESTION_MESSAGE);
-            
-            dataprocedimento = campoData.getText(); 
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        System.out.println(dataprocedimento);
+        String descricao = scannerDadosPessoais.nextLine();
         
         // Conectar ao banco de dados e inserir os dados
         String url = ""; // URL do banco
@@ -89,7 +73,7 @@ public class ColetadeDadosdoCliente {
         String senha = "";        // Senha do MySQL
 
         // Query SQL para inserção dos dados
-        String query = "INSERT INTO cliente (nome, email, datanascimento, cpf, bairro, profissao, ondeconheceu, corpreferida, descricao, dataprocedimento) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO cliente (nome, email, datanascimento, cpf, bairro, profissao, ondeconheceu, corpreferida) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(url, usuario, senha);
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -113,7 +97,31 @@ public class ColetadeDadosdoCliente {
             e.printStackTrace();
         }
 
-        // Fechar o scanner
-        scanner.close();
+        // Fechar o scannerDadosPessoais
+        scannerDadosPessoais.close();
     }
+    Scanner scannerFinanceiro = new Scanner(System.in);
+
+    System.out.println("Data de procedimento: ");
+    String dataprocedimento = ""; 
+
+    try {
+        MaskFormatter mask = new MaskFormatter("####-##-##");
+        mask.setPlaceholderCharacter('_');
+
+        JFormattedTextField campoData = new JFormattedTextField(mask);
+        JOptionPane.showMessageDialog(null, campoData, "Data do procedimento: ", JOptionPane.QUESTION_MESSAGE);
+        
+        dataprocedimento = campoData.getText(); 
+    } catch (ParseException e) {
+        e.printStackTrace();
+    }
+    System.out.println(dataprocedimento);
+            // Conectar ao banco de dados e inserir os dados
+            String url = ""; // URL do banco
+            String usuario = "";  // Nome de usuário MySQL
+            String senha = "";        // Senha do MySQL
+    
+            // Query SQL para inserção dos dados
+            String query = "INSERT INTO cliente (dataTatuagem, descriçãoTatuagem, valorTatuagem, parceladoOUnao, comOUsemjuros, numDeParcelas, ) VALUES (?, ?, ?, ?, ?, ?)";
 }
