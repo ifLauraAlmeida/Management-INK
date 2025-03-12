@@ -2,78 +2,61 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.Scanner;
-import javax.swing.JFormattedTextField;
-import javax.swing.JOptionPane;
-import javax.swing.text.MaskFormatter;
 
-    public class ColetaDadosFinanceiros {
-        public static class DadosFinanceiros {
-            public static void main(String[] args) {
+public class ColetaDadosFinanceiros {
+    public static void main(String[] args) {
 
-                Scanner scannerFinanceiro = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
-                System.out.println("Data de procedimento: ");
-                String dataProcedimento ="";
+        System.out.print("ID do cliente: ");
+        int clienteId = Integer.parseInt(scanner.nextLine()); // Associar ao cliente correto
 
-                try {
-                    MaskFormatter mask = new MaskFormatter("####-##-##");
-                    mask.setPlaceholderCharacter('_');
+        System.out.print("Data de procedimento (YYYY-MM-DD): ");
+        String dataProcedimento = scanner.nextLine();
 
-                    JFormattedTextField campoData = new JFormattedTextField(mask);
-                    JOptionPane.showMessageDialog(null, campoData, "Data do procedimento: ", JOptionPane.QUESTION_MESSAGE);
+        System.out.print("Descrição da tatuagem: ");
+        String descricaoTatuagem = scanner.nextLine();
 
-                    dataProcedimento = campoData.getText();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                System.out.println(dataProcedimento);
+        System.out.print("Valor total da tatuagem: ");
+        double valor = Double.parseDouble(scanner.nextLine());
 
-                System.out.print("Descrição da tatuagem: ");
-                String descricaoTatuagem = scannerFinanceiro.nextLine();
+        System.out.print("Método de pagamento: ");
+        String metodoPagamento = scanner.nextLine();
 
-                System.out.println("Valor total da tatuagem: ");
-                String valor = scannerFinanceiro.nextLine();
+        System.out.print("Número de parcelas: ");
+        int parcelas = Integer.parseInt(scanner.nextLine());
 
-                System.out.println("Método de pagamento: ");
-                String metodoPagamento = scannerFinanceiro.nextLine();
+        System.out.print("Valor dividido: ");
+        String valorDividido = scanner.nextLine();
 
-                System.out.println("Número de parcelas: ");
-                String parcelas = scannerFinanceiro.nextLine();
+        // Conectar ao banco de dados e inserir os dados
+        String url = "jdbc:mysql://localhost:3306/management-ink?useSSL=false&allowPublicKeyRetrieval=true";
+        String usuario = "root";
+        String senha = "senha12345678_";
 
-                System.out.println("Valor divido: ");
-                String valorDividido = scannerFinanceiro.nextLine();
+        // Query SQL corrigida para a tabela `financeiro`
+        String query = "INSERT INTO financeiro (cliente_id, dataProcedimento, descricaoTatuagem, valor, metodoPagamento, parcelas, valorDivido) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-                // Conectar ao banco de dados e inserir os dados
-                String url = "jdbc:mysql://localhost:3306/"; // URL do banco
-                String usuario = "root";  // Nome de usuário MySQL
-                String senha = "senha12345678_";        // Senha do MySQL
+        try (Connection conn = DriverManager.getConnection(url, usuario, senha);
+             PreparedStatement stmt = conn.prepareStatement(query)) {
 
-                // Query SQL para inserção dos d--ados
-                String query = "INSERT INTO cliente (dataProcedimento, descricaoTatuagem, valor, metodoPagamento, parcelas, valorDivido) VALUES (?, ?, ?, ?, ?, ?)";
+            // Definir os valores dos parâmetros
+            stmt.setInt(1, clienteId);
+            stmt.setString(2, dataProcedimento);
+            stmt.setString(3, descricaoTatuagem);
+            stmt.setDouble(4, valor);
+            stmt.setString(5, metodoPagamento);
+            stmt.setInt(6, parcelas);
+            stmt.setString(7, valorDividido);
 
-                try (Connection conn = DriverManager.getConnection(url, usuario, senha);
-                     PreparedStatement stmt = conn.prepareStatement(query)) {
-
-                    // Definir os valores dos parâmetros
-                    stmt.setString(1, dataProcedimento);
-                    stmt.setString(2, descricaoTatuagem);
-                    stmt.setString(3, valor);
-                    stmt.setString(4, metodoPagamento);
-                    stmt.setString(5, parcelas);
-                    stmt.setString(6, valorDividido);
-
-                    // Executar a query
-                    stmt.executeUpdate();
-                    System.out.println("Dados inseridos no banco com sucesso!");
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
-                // Fechar o scannerDadosPessoais
-                scannerFinanceiro.close();
-            }
+            // Executar a query
+            stmt.executeUpdate();
+            System.out.println("Dados financeiros inseridos no banco com sucesso!");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    }
 
+        scanner.close();
+    }
+}

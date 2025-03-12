@@ -1,79 +1,47 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.text.ParseException;
+import java.sql.*;
 import java.util.Scanner;
-import javax.swing.JFormattedTextField;
-import javax.swing.JOptionPane;
-import javax.swing.text.MaskFormatter;
 
 public class ColetaDadosdoCliente {
     public static void main(String[] args) {
-        Scanner scannerDadosPessoais = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
         // Coleta dos dados do cliente
         System.out.print("Nome do Cliente: ");
-        String nome = scannerDadosPessoais.nextLine();
+        String nome = scanner.nextLine();
 
-        System.out.println("E-mail do cliente: ");
-        String email = scannerDadosPessoais.nextLine();
+        System.out.print("E-mail do cliente: ");
+        String email = scanner.nextLine();
 
-        System.out.println("Data de Nascimento: ");
-        String dataNascimento = "";
+        System.out.print("Data de Nascimento (YYYY-MM-DD): ");
+        String dataNascimento = scanner.nextLine();
 
-        try {
-            MaskFormatter mask = new MaskFormatter("####-##-##"); // Formato de data dd/mm/aaaa
-            mask.setPlaceholderCharacter('_');
+        System.out.print("CPF do cliente: ");
+        String cpf = scanner.nextLine();
 
-            JFormattedTextField campoData = new JFormattedTextField(mask);
-            JOptionPane.showMessageDialog(null, campoData, "Data de nascimento do cliente:", JOptionPane.QUESTION_MESSAGE);
+        System.out.print("Bairro do cliente: ");
+        String bairro = scanner.nextLine();
 
-            dataNascimento = campoData.getText(); // Atribui o valor
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        System.out.println(dataNascimento);
+        System.out.print("Profissão do cliente: ");
+        String profissao = scanner.nextLine();
 
-        System.out.println("CPF do cliente: ");
-        String cpf = "";
-        try {
-            MaskFormatter maskCPF = new MaskFormatter("###.###.###-##"); // Formatar CPF
-            maskCPF.setPlaceholderCharacter('_');
+        System.out.print("Onde o cliente nos conheceu: ");
+        String ondeConheceu = scanner.nextLine();
 
-            JFormattedTextField campoCPF = new JFormattedTextField(maskCPF);
-            JOptionPane.showMessageDialog(null, campoCPF, "CPF do cliente:", JOptionPane.QUESTION_MESSAGE);
-            cpf = campoCPF.getText();
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        System.out.println(cpf);
-
-        System.out.println("Bairro cliente: ");
-        String bairro = scannerDadosPessoais.nextLine();
-
-        System.out.println("Profissao do cliente: ");
-        String profissao = scannerDadosPessoais.nextLine();
-
-        System.out.println("Onde o cliente nos conheceu: ");
-        String ondeConheceu = scannerDadosPessoais.nextLine();
-
-        System.out.println("Cor preferida do cliente: ");
-        String corPreferida = scannerDadosPessoais.nextLine();
+        System.out.print("Cor preferida do cliente: ");
+        String corPreferida = scanner.nextLine();
 
         // Conectar ao banco de dados e inserir os dados
-        String url = "jdbc:mysql://localhost:3306/"; // URL do banco
-        String usuario = "root";  // Nome de usuário MySQL
-        String senha = "senha12345678_";        // Senha do MySQL
+        String url = "jdbc:mysql://localhost:3306/management-ink?useSSL=false&allowPublicKeyRetrieval=true";
+        String usuario = "root";
+        String senha = "senha12345678_";
 
-        // Query SQL para inserção dos dados
+        // Query para inserção
         String query = "INSERT INTO cliente (nome, email, dataNascimento, cpf, bairro, profissao, ondeConheceu, corPreferida) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(url, usuario, senha);
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+             PreparedStatement stmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            // `Statement.RETURN_GENERATED_KEYS` permite capturar o ID gerado
 
-            // Definir os valores dos parâmetros
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.setString(3, dataNascimento);
@@ -83,14 +51,19 @@ public class ColetaDadosdoCliente {
             stmt.setString(7, ondeConheceu);
             stmt.setString(8, corPreferida);
 
-            // Executar a query
             stmt.executeUpdate();
-            System.out.println("Dados inseridos no banco com sucesso!");
+
+            // Recupera o ID gerado
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int clienteId = generatedKeys.getInt(1);
+                System.out.println("Cliente cadastrado com sucesso! ID do cliente: " + clienteId);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        // Fechar o scannerDadosPessoais
-        scannerDadosPessoais.close();
+        scanner.close();
     }
 }
