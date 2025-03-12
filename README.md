@@ -8,7 +8,7 @@ Segue o fluxograma que mediará toda a aplicação a fim de chegar simplificaç�
 graph TD;
     A[Usuário abre a aplicação]
     A --> C[Adicionar novo cliente]
-    C --> D[Dados do Cliente: Data da tattoo, Nome, Idade, CPF, Data de nascimento, Onde mora, Profissão, Onde nos conheceu, Cor preferida, Descrição da tatuagem]
+    C --> D[Dados do Cliente]
     C --> O[Dados monetários]
     O --> P[Valor total]
     P --> Q[Método de pagamento]
@@ -25,4 +25,3 @@ graph TD;
 ### Tentando jogar os dados do cliente para um arquivo txt.
 
 Bem, terminei meu módulo inicial de java ontem, não posso esperar que eu monte essa aplicação em um dia, portanto irei seguindo passos, primeiro vou montar um processo onde eu consiga pegar os dados desse cliente e os colocar em um arquivo txt.
-
